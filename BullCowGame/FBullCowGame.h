@@ -12,6 +12,16 @@ struct FBullCowCount
 	int32 Cows{ 0 };
 };
 
+enum class EGuessStatus
+{
+	DEFAULT,
+	OK,
+	NOT_ISOGRAM,
+	WRONG_LENGTH,
+	NOT_LOWERCASE,
+	
+
+};
 
 
 class FBullCowGame
@@ -27,13 +37,14 @@ public:
 	int32 GetCurrentTry() const;
 	int32 GetWORD_LENGTH() const;
 	
-	bool bIsGameWon() const ;
-	bool bCheckGuessValidity(FString);
+	bool IsGameWon() const;
+	EGuessStatus CheckGuessValidity(FString);
+	
 
 	
 
-	//TODO add some type of method for counting bulls and cows, increasing turn number,drawing bulls and cows to screen
-	FBullCowCount SubmitGuess(FString);
+	
+	FBullCowCount SubmitValidGuess(FString);
 
 
 
@@ -48,4 +59,5 @@ private:
 	int32 MyCurrentTry;
 	int32 MyMaxTries;
 	FString My_Hidden_Word;
+	bool bIsGameWon;
 };

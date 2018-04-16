@@ -12,6 +12,10 @@ if word is not a word, if word is not an isogram, etc
 the user gets 10 guesses
 
 if all guesses have been reached then game over
+
+ An isogram (also known as a "nonpattern word") is a word
+or phrase without a repeating letter.
+
 */
 
 /*  This is the console exe that makes use of the BullCow class. 
@@ -29,7 +33,7 @@ using int32 = int;
 //Prototyping functions
 void PrintIntro();
 void PlayGame();
-FText GetGuess();
+FText GetValidGuess();
 void PrintGuess(FText Guess);
 void PrintBullCowCount(int32 Bulls, int32 Cows);
 
@@ -46,10 +50,8 @@ int main()
 	do
 	{
 		BCGame.Reset();
-		
 		PrintIntro();
 		PlayGame();
-
 		bPlayAgain = AskToPlayAgain();
 	} while (bPlayAgain);
 
@@ -61,14 +63,12 @@ int main()
 void PlayGame()
 {
 	const int32 MaxTries = BCGame.GetMaxTries();
-	//for loop for looping through NUM_OF_TRIES
-	//TODO change from for to while loop once we are validating tries
-	for (int32 i = 1; i <= MaxTries; i++) {
-		FText Guess = GetGuess(); // TODO make loop check for valid guess
 
+	//for loop for looping through NUM_OF_TRIES	
+	while (!BCGame.IsGameWon() && BCGame.GetCurrentTry() <= MaxTries) {
+		FText Guess = GetValidGuess(); // TODO change from for to while									   
 		// submit valid guess to the game
-		FBullCowCount  BullCowCount = BCGame.SubmitGuess(Guess);
-
+		FBullCowCount  BullCowCount = BCGame.SubmitValidGuess(Guess);
 		//print guess and number of bulls and cows
 		PrintGuess(Guess);
 		int32 Bulls{ BullCowCount.Bulls };
@@ -92,21 +92,47 @@ void PrintIntro()
 }
 
 //Get guess from console
-FText GetGuess()
-{
-	
-	const int32 MaxTries = BCGame.GetMaxTries();
-	int32 CurrentTry = BCGame.GetCurrentTry();
+FText GetValidGuess() 
+{	
 	FText Guess = "";
+	EGuessStatus GuessStatus = EGuessStatus::DEFAULT;
+	do
+	{
+		const int32 MaxTries = BCGame.GetMaxTries();
+		int32 CurrentTry = BCGame.GetCurrentTry();
+		std::cout << "Try " << CurrentTry << " of " << MaxTries << ".Your Guess: ";
 
-	std::cout << "Try " << CurrentTry << " of " << MaxTries << ".Your Guess: ";
-	
-	std::getline(std::cin, Guess);
-	
+		std::getline(std::cin, Guess);
+
+		//check validity of guess
+		GuessStatus = BCGame.CheckGuessValidity(Guess);
+
+		switch (GuessStatus)
+		{
+		case EGuessStatus::DEFAULT:
+			GuessStatus = BCGame.CheckGuessValidity(Guess);
+			break;
+		case EGuessStatus::WRONG_LENGTH:
+			std::cout << "Please enter a " << BCGame.GetWORD_LENGTH() << " letter word.\n";
+			break;
+		case EGuessStatus::NOT_ISOGRAM:
+			std::cout << "The word entered was not an isogram. Please enter ";
+			std::cout << "a word without a repeating letter.\n";
+			break;
+		case EGuessStatus::NOT_LOWERCASE:
+			std::cout << "The word entered was not lowercase. Please enter ";
+			std::cout << "all lowercase letters.\n";
+			break;
+		case EGuessStatus::OK:
+			return Guess;
+			break;
+		default:
+			break;			
+		}
+		std::cout << std::endl;
+	} while (GuessStatus != EGuessStatus::OK); // keep looping until a vaild guess
 	return Guess;
 }
-
-
 
 //print guess to console
 void PrintGuess(FText Guess)
@@ -128,11 +154,7 @@ bool AskToPlayAgain()
 	FText Response;
 	std::getline(std::cin, Response);
 
-	/* TODO Refine if statement for better input handling. Things to check will be make sure correct letter has been selected(Y/N), make sure no int was entered,etc
-	   Advise user to enter letter(Y/N) again if incorrect, repeat until correct letter is entered.
-	*/
 	if (Response[0] == 'y' || Response[0] == 'Y') 
-
 	{
 		std::cout << std::flush;
 		system("CLS");
@@ -141,5 +163,4 @@ bool AskToPlayAgain()
 	else
 		std::cout << "Goodbye \n";
 		return false;
-
 }
