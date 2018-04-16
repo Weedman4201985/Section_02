@@ -53,6 +53,7 @@ FBullCowCount FBullCowGame::SubmitGuess(FString Guess)
 	//TODO setup an error handling variable
 	int32 HiddenWordLength = My_Hidden_Word.length();
 
+	//loop through all letters in the guess and compare each letter in the guess against the hidden word
 	for (int32 MHWChar = 0; MHWChar < HiddenWordLength; MHWChar++)
 	{
 		// compare letters against the hidden word
