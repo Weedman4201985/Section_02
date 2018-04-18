@@ -36,6 +36,7 @@ void PlayGame();
 FText GetValidGuess();
 void PrintGuess(FText Guess);
 void PrintBullCowCount(int32 Bulls, int32 Cows);
+void PrintGameSummary();
 
 bool AskToPlayAgain();
 
@@ -52,6 +53,7 @@ int main()
 		BCGame.Reset();
 		PrintIntro();
 		PlayGame();
+		PrintGameSummary();
 		bPlayAgain = AskToPlayAgain();
 	} while (bPlayAgain);
 
@@ -63,10 +65,9 @@ int main()
 void PlayGame()
 {
 	const int32 MaxTries = BCGame.GetMaxTries();
-
-	//for loop for looping through NUM_OF_TRIES	
+	
 	while (!BCGame.IsGameWon() && BCGame.GetCurrentTry() <= MaxTries) {
-		FText Guess = GetValidGuess(); // TODO change from for to while									   
+		FText Guess = GetValidGuess(); 								   
 		// submit valid guess to the game
 		FBullCowCount  BullCowCount = BCGame.SubmitValidGuess(Guess);
 		//print guess and number of bulls and cows
@@ -74,8 +75,7 @@ void PlayGame()
 		int32 Bulls{ BullCowCount.Bulls };
 		int32 Cows{ BullCowCount.Cows };
 		PrintBullCowCount(Bulls,Cows);
-	}
-		
+	}	
 }
 
 //Game intro
@@ -103,7 +103,6 @@ FText GetValidGuess()
 		std::cout << "Try " << CurrentTry << " of " << MaxTries << ".Your Guess: ";
 
 		std::getline(std::cin, Guess);
-
 		//check validity of guess
 		GuessStatus = BCGame.CheckGuessValidity(Guess);
 
@@ -146,6 +145,20 @@ void PrintBullCowCount(int32 Bulls,int32 Cows)
 {
 	std::cout << "Bulls: " << Bulls << " Cows: " << Cows << "\n" << std::endl;
 	return;
+}
+
+//game summary
+void PrintGameSummary()
+{
+
+	if (BCGame.IsGameWon())
+	{
+		std::cout << "You Win!!!! \n" << std::endl;
+	}
+	else
+	{
+		std::cout << "Sorry You Lose!!!!! \n" << std::endl;
+	}
 }
 
 bool AskToPlayAgain()
