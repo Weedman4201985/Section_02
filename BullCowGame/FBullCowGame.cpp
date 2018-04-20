@@ -1,4 +1,5 @@
 #include "FBullCowGame.h"
+
 //Constructor
 FBullCowGame::FBullCowGame()
 {
@@ -44,7 +45,7 @@ EGuessStatus FBullCowGame::CheckGuessValidity(FString Guess)
 //recieves a VALID guess, increments turn and return count
 FBullCowCount FBullCowGame::SubmitValidGuess(FString Guess)
 {
-	FBullCowCount FBullCowCount{ 0 };
+	FBullCowCount FBullCowCount;
 	int32 WordLength = My_Hidden_Word.length(); // assuming same length of guess
 	
 	//loop through all letters in the hidden word
